@@ -1,0 +1,162 @@
+%General Mission Analysis Tool(GMAT) Script
+%Created: 2023-12-20 21:57:12
+
+
+%----------------------------------------
+%---------- Spacecraft
+%----------------------------------------
+
+Create Spacecraft AreaVar;
+GMAT AreaVar.DateFormat = TAIModJulian;
+GMAT AreaVar.Epoch = '21545';
+GMAT AreaVar.CoordinateSystem = EarthMJ2000Eq;
+GMAT AreaVar.DisplayStateType = Keplerian;
+GMAT AreaVar.SMA = 7071;
+GMAT AreaVar.ECC = 0;
+GMAT AreaVar.INC = 0;
+GMAT AreaVar.RAAN = 0;
+GMAT AreaVar.AOP = 0;
+GMAT AreaVar.TA = 0;
+GMAT AreaVar.DryMass = 850;
+GMAT AreaVar.Cd = 2.2;
+GMAT AreaVar.Cr = 1.8;
+GMAT AreaVar.DragArea = 45;
+GMAT AreaVar.SRPArea = 1;
+GMAT AreaVar.SPADDragScaleFactor = 1;
+GMAT AreaVar.SPADSRPScaleFactor = 1;
+GMAT AreaVar.AtmosDensityScaleFactor = 1;
+GMAT AreaVar.ExtendedMassPropertiesModel = 'None';
+GMAT AreaVar.NAIFId = -10000001;
+GMAT AreaVar.NAIFIdReferenceFrame = -9000001;
+GMAT AreaVar.OrbitColor = Red;
+GMAT AreaVar.TargetColor = Teal;
+GMAT AreaVar.OrbitErrorCovariance = [ 1e+70 0 0 0 0 0 ; 0 1e+70 0 0 0 0 ; 0 0 1e+70 0 0 0 ; 0 0 0 1e+70 0 0 ; 0 0 0 0 1e+70 0 ; 0 0 0 0 0 1e+70 ];
+GMAT AreaVar.CdSigma = 1e+70;
+GMAT AreaVar.CrSigma = 1e+70;
+GMAT AreaVar.Id = 'SatId';
+GMAT AreaVar.Attitude = CoordinateSystemFixed;
+GMAT AreaVar.SPADSRPInterpolationMethod = Bilinear;
+GMAT AreaVar.SPADSRPScaleFactorSigma = 1e+70;
+GMAT AreaVar.SPADDragInterpolationMethod = Bilinear;
+GMAT AreaVar.SPADDragScaleFactorSigma = 1e+70;
+GMAT AreaVar.AtmosDensityScaleFactorSigma = 1e+70;
+GMAT AreaVar.ModelFile = 'aura.3ds';
+GMAT AreaVar.ModelOffsetX = 0;
+GMAT AreaVar.ModelOffsetY = 0;
+GMAT AreaVar.ModelOffsetZ = 0;
+GMAT AreaVar.ModelRotationX = 0;
+GMAT AreaVar.ModelRotationY = 0;
+GMAT AreaVar.ModelRotationZ = 0;
+GMAT AreaVar.ModelScale = 1;
+GMAT AreaVar.AttitudeDisplayStateType = 'Quaternion';
+GMAT AreaVar.AttitudeRateDisplayStateType = 'AngularVelocity';
+GMAT AreaVar.AttitudeCoordinateSystem = EarthMJ2000Eq;
+GMAT AreaVar.EulerAngleSequence = '321';
+
+
+
+%----------------------------------------
+%---------- ForceModels
+%----------------------------------------
+
+Create ForceModel EarthProp_ForceModel;
+GMAT EarthProp_ForceModel.CentralBody = Earth;
+GMAT EarthProp_ForceModel.PrimaryBodies = {Earth};
+GMAT EarthProp_ForceModel.PointMasses = {Jupiter, Luna, Mars, Mercury, Neptune, Pluto, Saturn, Sun, Uranus, Venus};
+GMAT EarthProp_ForceModel.SRP = On;
+GMAT EarthProp_ForceModel.RelativisticCorrection = On;
+GMAT EarthProp_ForceModel.ErrorControl = RSSStep;
+GMAT EarthProp_ForceModel.GravityField.Earth.Degree = 4;
+GMAT EarthProp_ForceModel.GravityField.Earth.Order = 4;
+GMAT EarthProp_ForceModel.GravityField.Earth.StmLimit = 100;
+GMAT EarthProp_ForceModel.GravityField.Earth.PotentialFile = 'JGM2.cof';
+GMAT EarthProp_ForceModel.GravityField.Earth.TideModel = 'Solid';
+GMAT EarthProp_ForceModel.SRP.Flux = 1367;
+GMAT EarthProp_ForceModel.SRP.SRPModel = Spherical;
+GMAT EarthProp_ForceModel.SRP.Nominal_Sun = 149597870.691;
+GMAT EarthProp_ForceModel.Drag.AtmosphereModel = MSISE90;
+GMAT EarthProp_ForceModel.Drag.HistoricWeatherSource = 'ConstantFluxAndGeoMag';
+GMAT EarthProp_ForceModel.Drag.PredictedWeatherSource = 'ConstantFluxAndGeoMag';
+GMAT EarthProp_ForceModel.Drag.CSSISpaceWeatherFile = 'SpaceWeather-All-v1.2.txt';
+GMAT EarthProp_ForceModel.Drag.SchattenFile = 'SchattenPredict.txt';
+GMAT EarthProp_ForceModel.Drag.F107 = 150;
+GMAT EarthProp_ForceModel.Drag.F107A = 150;
+GMAT EarthProp_ForceModel.Drag.MagneticIndex = 3;
+GMAT EarthProp_ForceModel.Drag.SchattenErrorModel = 'Nominal';
+GMAT EarthProp_ForceModel.Drag.SchattenTimingModel = 'NominalCycle';
+GMAT EarthProp_ForceModel.Drag.DragModel = 'Spherical';
+
+%----------------------------------------
+%---------- Propagators
+%----------------------------------------
+
+Create Propagator EarthProp;
+GMAT EarthProp.FM = EarthProp_ForceModel;
+GMAT EarthProp.Type = RungeKutta89;
+GMAT EarthProp.InitialStepSize = 60;
+GMAT EarthProp.Accuracy = 9.999999999999999e-12;
+GMAT EarthProp.MinStep = 0;
+GMAT EarthProp.MaxStep = 2700;
+GMAT EarthProp.MaxStepAttempts = 50;
+GMAT EarthProp.StopIfAccuracyIsViolated = true;
+
+%----------------------------------------
+%---------- Subscribers
+%----------------------------------------
+
+Create OrbitView DefaultOrbitView;
+GMAT DefaultOrbitView.SolverIterations = Current;
+GMAT DefaultOrbitView.UpperLeft = [ 0.006775067750677507 0 ];
+GMAT DefaultOrbitView.Size = [ 1.842818428184282 2.302931596091205 ];
+GMAT DefaultOrbitView.RelativeZOrder = 27;
+GMAT DefaultOrbitView.Maximized = false;
+GMAT DefaultOrbitView.Add = {AreaVar, Earth};
+GMAT DefaultOrbitView.CoordinateSystem = EarthMJ2000Eq;
+GMAT DefaultOrbitView.DrawObject = [ true true ];
+GMAT DefaultOrbitView.DataCollectFrequency = 1;
+GMAT DefaultOrbitView.UpdatePlotFrequency = 50;
+GMAT DefaultOrbitView.NumPointsToRedraw = 0;
+GMAT DefaultOrbitView.ShowPlot = true;
+GMAT DefaultOrbitView.MaxPlotPoints = 20000;
+GMAT DefaultOrbitView.ShowLabels = true;
+GMAT DefaultOrbitView.ViewPointReference = Earth;
+GMAT DefaultOrbitView.ViewPointVector = [ 30000 0 0 ];
+GMAT DefaultOrbitView.ViewDirection = Earth;
+GMAT DefaultOrbitView.ViewScaleFactor = 1;
+GMAT DefaultOrbitView.ViewUpCoordinateSystem = EarthMJ2000Eq;
+GMAT DefaultOrbitView.ViewUpAxis = Z;
+GMAT DefaultOrbitView.EclipticPlane = Off;
+GMAT DefaultOrbitView.XYPlane = On;
+GMAT DefaultOrbitView.WireFrame = Off;
+GMAT DefaultOrbitView.Axes = On;
+GMAT DefaultOrbitView.Grid = Off;
+GMAT DefaultOrbitView.SunLine = Off;
+GMAT DefaultOrbitView.UseInitialView = On;
+GMAT DefaultOrbitView.StarCount = 7000;
+GMAT DefaultOrbitView.EnableStars = On;
+GMAT DefaultOrbitView.EnableConstellations = On;
+
+Create ReportFile ReportData;
+GMAT ReportData.SolverIterations = Current;
+GMAT ReportData.UpperLeft = [ 0 0 ];
+GMAT ReportData.Size = [ 0 0 ];
+GMAT ReportData.RelativeZOrder = 0;
+GMAT ReportData.Maximized = false;
+GMAT ReportData.Filename = 'C:\Users\admin\Desktop\gmatsimul\areavar\45m2\15m2.txt';
+GMAT ReportData.Precision = 16;
+GMAT ReportData.Add = {AreaVar.A1ModJulian, AreaVar.Earth.Altitude, AreaVar.ElapsedSecs, AreaVar.Earth.Energy, AreaVar.Earth.SMA};
+GMAT ReportData.WriteHeaders = true;
+GMAT ReportData.LeftJustify = On;
+GMAT ReportData.ZeroFill = Off;
+GMAT ReportData.FixedWidth = false;
+GMAT ReportData.Delimiter = ',';
+GMAT ReportData.ColumnWidth = 23;
+GMAT ReportData.WriteReport = true;
+
+
+%----------------------------------------
+%---------- Mission Sequence
+%----------------------------------------
+
+BeginMissionSequence;
+Propagate EarthProp(AreaVar) {AreaVar.Earth.Altitude = 100};

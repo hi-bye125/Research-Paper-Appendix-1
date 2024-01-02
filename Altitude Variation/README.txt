@@ -1,0 +1,1 @@
+While 900km and 1100km GMAT files are given; the orbital decay is insignificat even over timescales of 100s of years, and hence they are excluded for analysis

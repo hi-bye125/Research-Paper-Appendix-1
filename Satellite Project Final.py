@@ -73,7 +73,7 @@ for i in new_altitude_files:
 time_to_decay_altitude_days = [x//31536000 for x in time_to_decay_altitude]
 
 heights=[300,500,550,600,650,700]
-plt.errorbar(heights, time_to_decay_altitude_days,yerr=0.08,fmt='.')
+plt.errorbar(heights, time_to_decay_altitude_days,yerr=0.04,fmt='.')
 plt.plot(heights, time_to_decay_altitude_days)
 plt.title("Altitude against Time")
 plt.title("Time to decay against initial altitude")
@@ -84,7 +84,7 @@ log_decay=numpy.log(time_to_decay_altitude_days)
 plt.plot(heights, log_decay)
 plt.title("Log of time to decay against initial altitude")
 plt.xlabel("Initial Altitude/km")
-plt.ylabel("Log of decay time/lg-s")
+plt.ylabel("Log of decay time/lg-year")
 
 """Make plots for Solar Flux Variation"""
 
@@ -102,9 +102,16 @@ for i in flux_files:
 time_to_decay_flux_days = [x//31536000 for x in time_to_decay_flux]
 flux=[75,100,125,150,175,200, 225, 250, 275, 300]
 plt.plot(flux,time_to_decay_flux_days)
+plt.errorbar(flux, time_to_decay_flux_days,yerr=0.04,fmt='.')
 plt.title("Time to decay against Solar Flux")
 plt.xlabel("Average Solar Flux @10.7cm/ W m-² Hz⁻¹")
 plt.ylabel("Time to decay/ years")
+
+log_decay=numpy.log(time_to_decay_flux_days)
+plt.plot(flux, log_decay)
+plt.title("Log of time to decay against solar flux")
+plt.xlabel("Initial Altitude/km")
+plt.ylabel("Log of decay time/lg-year")
 
 """Make graphs for area variation"""
 
@@ -122,7 +129,14 @@ for i in area_files:
   time_to_decay_area.append(timevar)
 time_to_decay_area_days = [x//31536000 for x in time_to_decay_area]
 area=[5,15,30,45,60]
-plt.plot(area,time_to_decay_area)
+plt.plot(area,time_to_decay_area_days)
+plt.errorbar(area, time_to_decay_area_days,yerr=0.04,fmt='.')
 plt.title("Time to decay against Cross sectional area")
 plt.xlabel("Cross sectional area/ m²")
 plt.ylabel("Time to decay/years")
+
+log_decay=numpy.log(time_to_decay_area_days)
+plt.plot(area, log_decay)
+plt.title("Log of time to decay against cross-sectional area")
+plt.xlabel("Initial Altitude/km")
+plt.ylabel("Log of decay time/lg-year")

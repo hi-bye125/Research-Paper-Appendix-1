@@ -1,0 +1,158 @@
+%General Mission Analysis Tool(GMAT) Script
+%Created: 2023-12-13 21:01:02
+
+
+%----------------------------------------
+%---------- Spacecraft
+%----------------------------------------
+
+Create Spacecraft AltitudeVar;
+GMAT AltitudeVar.DateFormat = TAIModJulian;
+GMAT AltitudeVar.Epoch = '21545';
+GMAT AltitudeVar.CoordinateSystem = EarthMJ2000Eq;
+GMAT AltitudeVar.DisplayStateType = Keplerian;
+GMAT AltitudeVar.SMA = 6471;
+GMAT AltitudeVar.ECC = 0;
+GMAT AltitudeVar.INC = 0;
+GMAT AltitudeVar.RAAN = 0;
+GMAT AltitudeVar.AOP = 0;
+GMAT AltitudeVar.TA = 0;
+GMAT AltitudeVar.DryMass = 850;
+GMAT AltitudeVar.Cd = 2.2;
+GMAT AltitudeVar.Cr = 1.8;
+GMAT AltitudeVar.DragArea = 15;
+GMAT AltitudeVar.SRPArea = 1;
+GMAT AltitudeVar.SPADDragScaleFactor = 1;
+GMAT AltitudeVar.SPADSRPScaleFactor = 1;
+GMAT AltitudeVar.AtmosDensityScaleFactor = 1;
+GMAT AltitudeVar.ExtendedMassPropertiesModel = 'None';
+GMAT AltitudeVar.NAIFId = -10001001;
+GMAT AltitudeVar.NAIFIdReferenceFrame = -9001001;
+GMAT AltitudeVar.OrbitColor = Red;
+GMAT AltitudeVar.TargetColor = Teal;
+GMAT AltitudeVar.OrbitErrorCovariance = [ 1e+70 0 0 0 0 0 ; 0 1e+70 0 0 0 0 ; 0 0 1e+70 0 0 0 ; 0 0 0 1e+70 0 0 ; 0 0 0 0 1e+70 0 ; 0 0 0 0 0 1e+70 ];
+GMAT AltitudeVar.CdSigma = 1e+70;
+GMAT AltitudeVar.CrSigma = 1e+70;
+GMAT AltitudeVar.Id = 'SatId';
+GMAT AltitudeVar.Attitude = CoordinateSystemFixed;
+GMAT AltitudeVar.SPADSRPInterpolationMethod = Bilinear;
+GMAT AltitudeVar.SPADSRPScaleFactorSigma = 1e+70;
+GMAT AltitudeVar.SPADDragInterpolationMethod = Bilinear;
+GMAT AltitudeVar.SPADDragScaleFactorSigma = 1e+70;
+GMAT AltitudeVar.AtmosDensityScaleFactorSigma = 1e+70;
+GMAT AltitudeVar.ModelFile = 'aura.3ds';
+GMAT AltitudeVar.ModelOffsetX = 0;
+GMAT AltitudeVar.ModelOffsetY = 0;
+GMAT AltitudeVar.ModelOffsetZ = 0;
+GMAT AltitudeVar.ModelRotationX = 0;
+GMAT AltitudeVar.ModelRotationY = 0;
+GMAT AltitudeVar.ModelRotationZ = 0;
+GMAT AltitudeVar.ModelScale = 1;
+GMAT AltitudeVar.AttitudeDisplayStateType = 'Quaternion';
+GMAT AltitudeVar.AttitudeRateDisplayStateType = 'AngularVelocity';
+GMAT AltitudeVar.AttitudeCoordinateSystem = EarthMJ2000Eq;
+GMAT AltitudeVar.EulerAngleSequence = '321';
+
+
+%----------------------------------------
+%---------- ForceModels
+%----------------------------------------
+
+Create ForceModel NearEarth_ForceModel;
+GMAT NearEarth_ForceModel.CentralBody = Earth;
+GMAT NearEarth_ForceModel.PrimaryBodies = {Earth};
+GMAT NearEarth_ForceModel.PointMasses = {Jupiter, Luna, Mars, Mercury, Neptune, Pluto, Saturn, Sun, Uranus, Venus};
+GMAT NearEarth_ForceModel.SRP = Off;
+GMAT NearEarth_ForceModel.RelativisticCorrection = On;
+GMAT NearEarth_ForceModel.ErrorControl = RSSStep;
+GMAT NearEarth_ForceModel.GravityField.Earth.Degree = 20;
+GMAT NearEarth_ForceModel.GravityField.Earth.Order = 20;
+GMAT NearEarth_ForceModel.GravityField.Earth.StmLimit = 100;
+GMAT NearEarth_ForceModel.GravityField.Earth.PotentialFile = 'JGM2.cof';
+GMAT NearEarth_ForceModel.GravityField.Earth.TideModel = 'None';
+GMAT NearEarth_ForceModel.Drag.AtmosphereModel = MSISE90;
+GMAT NearEarth_ForceModel.Drag.HistoricWeatherSource = 'ConstantFluxAndGeoMag';
+GMAT NearEarth_ForceModel.Drag.PredictedWeatherSource = 'ConstantFluxAndGeoMag';
+GMAT NearEarth_ForceModel.Drag.CSSISpaceWeatherFile = 'SpaceWeather-All-v1.2.txt';
+GMAT NearEarth_ForceModel.Drag.SchattenFile = 'SchattenPredict.txt';
+GMAT NearEarth_ForceModel.Drag.F107 = 150;
+GMAT NearEarth_ForceModel.Drag.F107A = 150;
+GMAT NearEarth_ForceModel.Drag.MagneticIndex = 3;
+GMAT NearEarth_ForceModel.Drag.SchattenErrorModel = 'Nominal';
+GMAT NearEarth_ForceModel.Drag.SchattenTimingModel = 'NominalCycle';
+GMAT NearEarth_ForceModel.Drag.DragModel = 'Spherical';
+
+%----------------------------------------
+%---------- Propagators
+%----------------------------------------
+
+Create Propagator NearEarth;
+GMAT NearEarth.FM = NearEarth_ForceModel;
+GMAT NearEarth.Type = RungeKutta89;
+GMAT NearEarth.InitialStepSize = 60;
+GMAT NearEarth.Accuracy = 9.999999999999999e-12;
+GMAT NearEarth.MinStep = 0;
+GMAT NearEarth.MaxStep = 2700;
+GMAT NearEarth.MaxStepAttempts = 50;
+GMAT NearEarth.StopIfAccuracyIsViolated = true;
+
+%----------------------------------------
+%---------- Subscribers
+%----------------------------------------
+
+Create OrbitView DefaultOrbitView;
+GMAT DefaultOrbitView.SolverIterations = Current;
+GMAT DefaultOrbitView.UpperLeft = [ 0.002352941176470588 0 ];
+GMAT DefaultOrbitView.Size = [ 0.8 0.8497596153846154 ];
+GMAT DefaultOrbitView.RelativeZOrder = 31;
+GMAT DefaultOrbitView.Maximized = false;
+GMAT DefaultOrbitView.Add = {AltitudeVar, Earth};
+GMAT DefaultOrbitView.CoordinateSystem = EarthMJ2000Eq;
+GMAT DefaultOrbitView.DrawObject = [ true true ];
+GMAT DefaultOrbitView.DataCollectFrequency = 1;
+GMAT DefaultOrbitView.UpdatePlotFrequency = 50;
+GMAT DefaultOrbitView.NumPointsToRedraw = 0;
+GMAT DefaultOrbitView.ShowPlot = true;
+GMAT DefaultOrbitView.MaxPlotPoints = 20000;
+GMAT DefaultOrbitView.ShowLabels = true;
+GMAT DefaultOrbitView.ViewPointReference = Earth;
+GMAT DefaultOrbitView.ViewPointVector = [ 30000 0 0 ];
+GMAT DefaultOrbitView.ViewDirection = Earth;
+GMAT DefaultOrbitView.ViewScaleFactor = 1;
+GMAT DefaultOrbitView.ViewUpCoordinateSystem = EarthMJ2000Eq;
+GMAT DefaultOrbitView.ViewUpAxis = Z;
+GMAT DefaultOrbitView.EclipticPlane = Off;
+GMAT DefaultOrbitView.XYPlane = On;
+GMAT DefaultOrbitView.WireFrame = Off;
+GMAT DefaultOrbitView.Axes = On;
+GMAT DefaultOrbitView.Grid = Off;
+GMAT DefaultOrbitView.SunLine = Off;
+GMAT DefaultOrbitView.UseInitialView = On;
+GMAT DefaultOrbitView.StarCount = 7000;
+GMAT DefaultOrbitView.EnableStars = On;
+GMAT DefaultOrbitView.EnableConstellations = On;
+
+Create ReportFile ReportFile1;
+GMAT ReportFile1.SolverIterations = Current;
+GMAT ReportFile1.UpperLeft = [ 0 0 ];
+GMAT ReportFile1.Size = [ 0 0 ];
+GMAT ReportFile1.RelativeZOrder = 0;
+GMAT ReportFile1.Maximized = false;
+GMAT ReportFile1.Filename = 'C:\Users\admin\Desktop\gmatsimul\altitudevar\100km\100km.txt';
+GMAT ReportFile1.Precision = 16;
+GMAT ReportFile1.Add = {AltitudeVar.A1ModJulian, AltitudeVar.ElapsedSecs, AltitudeVar.Earth.Energy, AltitudeVar.Earth.Altitude, AltitudeVar.Earth.SMA};
+GMAT ReportFile1.WriteHeaders = true;
+GMAT ReportFile1.LeftJustify = On;
+GMAT ReportFile1.ZeroFill = Off;
+GMAT ReportFile1.FixedWidth = false;
+GMAT ReportFile1.Delimiter = ',';
+GMAT ReportFile1.ColumnWidth = 23;
+GMAT ReportFile1.WriteReport = true;
+
+
+%----------------------------------------
+%---------- Mission Sequence
+%----------------------------------------
+
+BeginMissionSequence;
+Propagate NearEarth(AltitudeVar) {AltitudeVar.Earth.Altitude = 0.01};
